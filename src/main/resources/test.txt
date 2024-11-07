@@ -1,0 +1,4 @@
+if a < b then output a
+elseif c > d then output d
+else output e
+end

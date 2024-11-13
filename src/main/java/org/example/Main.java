@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Введите путь к файлу");
         String path = System.console().readLine();
-        String input = Files.readAllLines(Path.of(path)).toString();
+        String input = Files.readString(Path.of(path));
         List<Token> tokens = LexAnalyzer.lex(input);
         for(Token token : tokens) {
             System.out.println(token);

@@ -23,11 +23,13 @@ public class LexAnalyzer {
                     } else if (Character.isDigit(c)) {
                         currentToken.append(c);
                         currentState = TokenType.CONSTANT;
-                    } else if (c == '<' || c == '>' || c == '=') {
+                    } else if ("<>=".indexOf(c) != -1) {
                         currentToken.append(c);
                         currentState = TokenType.COMPARISON_OPERATOR;
-                    } else if ("+-*/".indexOf(c) != -1) {
-                        tokens.add(new Token(TokenType.ARITHMETIC_OPERATION, String.valueOf(c)));
+                    } else if ("+-".indexOf(c) != -1) {
+                        tokens.add(new Token(TokenType.ARITHMETIC_OPERATION_LOW_PRIORITY, String.valueOf(c)));
+                    } else if ("*/".indexOf(c) != -1) {
+                        tokens.add(new Token(TokenType.ARITHMETIC_OPERATION_HIGH_PRIORITY, String.valueOf(c)));
                     } else {
                         tokens.add(new Token(TokenType.UNKNOWN, String.valueOf(c)));
                     }
@@ -56,14 +58,12 @@ public class LexAnalyzer {
                     break;
 
                 case COMPARISON_OPERATOR:
-                    // Проверка на `<>` как отдельный оператор сравнения
                     if (currentToken.length() == 1 && currentToken.charAt(0) == '<' && c == '>') {
                         currentToken.append(c); // Создаем токен `<>`
                         tokens.add(new Token(TokenType.COMPARISON_OPERATOR, currentToken.toString()));
                         currentToken.setLength(0);
                         currentState = null;
                     } else {
-                        // Завершаем токен оператора сравнения `<`, `>`, или `=`, если он состоял из одного символа
                         tokens.add(new Token(TokenType.COMPARISON_OPERATOR, currentToken.toString()));
                         currentToken.setLength(0);
                         currentState = null;
@@ -90,7 +90,7 @@ public class LexAnalyzer {
         return tokens;
     }
 
-    // Обновленный метод для обработки ключевых слов и логических операторов с полной чувствительностью к регистру
+    // Обновленный метод для обработки ключевых слов и логических операторов
     private static Token createKeywordOrIdentifierToken(String text) {
         switch (text) {
             case "if": return new Token(TokenType.IF, text);
@@ -99,10 +99,10 @@ public class LexAnalyzer {
             case "elseif": return new Token(TokenType.ELSEIF, text);
             case "end": return new Token(TokenType.END, text);
             case "output": return new Token(TokenType.OUTPUT, text);
-            case "not": return new Token(TokenType.UNARY_LOGICAL_OPERATION, text);
-            case "and": return new Token(TokenType.BINARY_LOGICAL_OPERATION, text);
-            case "or": return new Token(TokenType.BINARY_LOGICAL_OPERATION, text);
-            default: return new Token(TokenType.IDENTIFIER, text);  // Обработка как идентификатор
+            case "not": return new Token(TokenType.NOT, text);  // Унарный логический оператор
+            case "and": return new Token(TokenType.AND, text);  // Бинарный логический оператор
+            case "or": return new Token(TokenType.OR, text);    // Бинарный логический оператор
+            default: return new Token(TokenType.IDENTIFIER, text);
         }
     }
 }

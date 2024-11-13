@@ -1,4 +1,6 @@
 if a < b then output a
 elseif c > d then output d
+elseif a*b+b=c/d-a then output c
+elseif a+a+b<>c+c+c then output b
 else output e
 end

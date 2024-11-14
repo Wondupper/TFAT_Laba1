@@ -12,7 +12,6 @@ public class LexAnalyzer {
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
 
-            // Переход к состояниям и обработка токенов
             switch (currentState) {
                 case null:
                     if (Character.isWhitespace(c)) {
@@ -42,7 +41,7 @@ public class LexAnalyzer {
                         tokens.add(createKeywordOrIdentifierToken(currentToken.toString()));
                         currentToken.setLength(0);
                         currentState = null;
-                        i--; // Возвращаем текущий символ для повторной обработки
+                        i--;
                     }
                     break;
 
@@ -53,13 +52,13 @@ public class LexAnalyzer {
                         tokens.add(new Token(TokenType.CONSTANT, currentToken.toString()));
                         currentToken.setLength(0);
                         currentState = null;
-                        i--; // Возвращаем текущий символ для повторной обработки
+                        i--;
                     }
                     break;
 
                 case COMPARISON_OPERATOR:
                     if (currentToken.length() == 1 && currentToken.charAt(0) == '<' && c == '>') {
-                        currentToken.append(c); // Создаем токен `<>`
+                        currentToken.append(c);
                         tokens.add(new Token(TokenType.COMPARISON_OPERATOR, currentToken.toString()));
                         currentToken.setLength(0);
                         currentState = null;
@@ -67,7 +66,7 @@ public class LexAnalyzer {
                         tokens.add(new Token(TokenType.COMPARISON_OPERATOR, currentToken.toString()));
                         currentToken.setLength(0);
                         currentState = null;
-                        i--; // Возвращаем текущий символ для повторной обработки
+                        i--;
                     }
                     break;
 
@@ -76,7 +75,6 @@ public class LexAnalyzer {
             }
         }
 
-        // Обработка остаточного токена, если он есть
         if (currentToken.length() > 0) {
             if (currentState == TokenType.IDENTIFIER) {
                 tokens.add(createKeywordOrIdentifierToken(currentToken.toString()));
@@ -90,7 +88,6 @@ public class LexAnalyzer {
         return tokens;
     }
 
-    // Обновленный метод для обработки ключевых слов и логических операторов
     private static Token createKeywordOrIdentifierToken(String text) {
         switch (text) {
             case "if": return new Token(TokenType.IF, text);
@@ -99,9 +96,9 @@ public class LexAnalyzer {
             case "elseif": return new Token(TokenType.ELSEIF, text);
             case "end": return new Token(TokenType.END, text);
             case "output": return new Token(TokenType.OUTPUT, text);
-            case "not": return new Token(TokenType.NOT, text);  // Унарный логический оператор
-            case "and": return new Token(TokenType.AND, text);  // Бинарный логический оператор
-            case "or": return new Token(TokenType.OR, text);    // Бинарный логический оператор
+            case "not": return new Token(TokenType.NOT, text);
+            case "and": return new Token(TokenType.AND, text);
+            case "or": return new Token(TokenType.OR, text);
             default: return new Token(TokenType.IDENTIFIER, text);
         }
     }

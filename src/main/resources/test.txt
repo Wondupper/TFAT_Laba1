@@ -1,6 +1,4 @@
-if a <> b then output a
-elseif c == d then a = b
-elseif c > d then c = d
-elseif a < b then a = c
+if a <>> b then output a
+elseif c ==<< d then a << =<> b
 else output e
 end

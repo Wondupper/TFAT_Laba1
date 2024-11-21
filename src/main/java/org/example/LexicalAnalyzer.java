@@ -62,8 +62,8 @@ public class LexicalAnalyzer {
                     if (Character.isWhitespace(currentSymbol)) {
                         currentState = State.START;
                     } else if (currentSymbol == '>') {
-                        currentState = State.START;
                         currentLexeme.append(currentSymbol);
+                        currentState = State.COMPARISON;
                     } else if (Character.isLetter(currentSymbol)) {
                         currentState = State.IDENTIFIER;
                         nextLexeme.append(currentSymbol);

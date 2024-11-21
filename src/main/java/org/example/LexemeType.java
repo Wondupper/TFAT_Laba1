@@ -13,5 +13,6 @@ public enum LexemeType {
     RELATION,
     ARITHMETIC,
     ASSIGMENT,
+    DELIMITER,
     UNDEFINED
 }

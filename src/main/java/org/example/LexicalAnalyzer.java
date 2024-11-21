@@ -45,14 +45,14 @@ public class LexicalAnalyzer {
                         currentState = State.ARITHMETIC;
                     } else if (currentSymbol == '=') {
                         currentState = State.ASSIGMENT;
+                    } else if (currentSymbol == ';') {
+                        currentState = State.DELIMITER;
                     } else {
                         currentState = State.ERROR;
                     }
                     canAdd = false;
                     if (!Character.isWhitespace(currentSymbol)) {
-                        {
-                            currentLexeme.append(currentSymbol);
-                        }
+                        currentLexeme.append(currentSymbol);
                     }
                 }
                 case COMPARISON -> {
@@ -66,6 +66,9 @@ public class LexicalAnalyzer {
                         nextLexeme.append(currentSymbol);
                     } else if (Character.isDigit(currentSymbol)) {
                         currentState = State.CONSTANT;
+                        nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == ';') {
+                        currentState = State.DELIMITER;
                         nextLexeme.append(currentSymbol);
                     } else {
                         currentState = State.ERROR;
@@ -87,6 +90,9 @@ public class LexicalAnalyzer {
                         nextLexeme.append(currentSymbol);
                     } else if (Character.isDigit(currentSymbol)) {
                         currentState = State.CONSTANT;
+                        nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == ';') {
+                        currentState = State.DELIMITER;
                         nextLexeme.append(currentSymbol);
                     } else {
                         currentState = State.ERROR;
@@ -111,6 +117,9 @@ public class LexicalAnalyzer {
                             || currentSymbol == '*' || currentSymbol
                             == '/') {
                         currentState = State.ARITHMETIC;
+                        nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == ';') {
+                        currentState = State.DELIMITER;
                         nextLexeme.append(currentSymbol);
                     } else {
                         currentState = State.ERROR;
@@ -137,6 +146,9 @@ public class LexicalAnalyzer {
                             == '/') {
                         currentState = State.ARITHMETIC;
                         nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == ';') {
+                        currentState = State.DELIMITER;
+                        nextLexeme.append(currentSymbol);
                     } else {
                         currentState = State.ERROR;
                         canAdd = false;
@@ -154,6 +166,32 @@ public class LexicalAnalyzer {
                     } else if (currentSymbol == '-' ||
                             currentSymbol == '+' || currentSymbol == '*' || currentSymbol
                             == '/') {
+                        currentState = State.ARITHMETIC;
+                        nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == ';') {
+                        currentState = State.DELIMITER;
+                        nextLexeme.append(currentSymbol);
+                    } else {
+                        currentState = State.ERROR;
+                        canAdd = false;
+                    }
+                }
+                case DELIMITER -> {
+                    if(Character.isWhitespace(currentSymbol)) {
+                        currentState = State.START;
+                    } else if (Character.isLetter(currentSymbol)) {
+                        currentState = State.IDENTIFIER;
+                        nextLexeme.append(currentSymbol);
+                    } else if (Character.isDigit(currentSymbol)) {
+                        currentState = State.CONSTANT;
+                        nextLexeme.append(currentSymbol);
+                    } else if (currentSymbol == ';') {
+                        currentState = State.DELIMITER;
+                        currentLexeme.append(currentSymbol);
+                    } else if (currentSymbol == '=') {
+                        currentState = State.COMPARISON;
+                        nextLexeme.append(currentSymbol);
+                    } else if (currentSymbol == '-' || currentSymbol == '+' || currentSymbol == '*' || currentSymbol == '/') {
                         currentState = State.ARITHMETIC;
                         nextLexeme.append(currentSymbol);
                     } else {
@@ -198,7 +236,10 @@ public class LexicalAnalyzer {
         } else if (prevState == State.COMPARISON) {
             lexemeType = LexemeType.RELATION;
             lexemeCategory = LexemeCategory.SPECIAL_SYMBOL;
-        } else if (prevState == State.IDENTIFIER) {
+        } else if (prevState == State.DELIMITER) {
+            lexemeType = LexemeType.DELIMITER;
+            lexemeCategory = LexemeCategory.SPECIAL_SYMBOL;
+        }else if (prevState == State.IDENTIFIER) {
             boolean isKeyword = true;
             if (value.equalsIgnoreCase("if")) {
                 lexemeType = LexemeType.IF;

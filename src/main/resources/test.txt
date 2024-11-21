@@ -1,6 +1,6 @@
 if a <> b then output a
 elseif c == d then a = b
-elseif c >>> d then c = d
+elseif c > d then c = d
 elseif a < b then a = c
 else output e
 end

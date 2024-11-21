@@ -8,5 +8,6 @@ public enum State {
     COMPARISON,
     ARITHMETIC,
     ASSIGMENT,
+    DELIMITER,
     FINAL
 }

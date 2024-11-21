@@ -18,6 +18,8 @@ public class LexicalAnalyzer {
         StringBuilder currentLexeme = new StringBuilder();
         StringBuilder nextLexeme = new StringBuilder();
         int index = 0;
+        int lexemeStart = 0;
+        int lexemeEnd = 0;
         while (currentState != State.ERROR) {
             previousState = currentState;
             canAdd = true;
@@ -53,6 +55,7 @@ public class LexicalAnalyzer {
                     canAdd = false;
                     if (!Character.isWhitespace(currentSymbol)) {
                         currentLexeme.append(currentSymbol);
+                        lexemeStart = index;
                     }
                 }
                 case COMPARISON -> {
@@ -204,7 +207,8 @@ public class LexicalAnalyzer {
                 throw new IllegalArgumentException("Ошибка при обработке лексемы:" + currentLexeme + nextLexeme);
             }
             if (canAdd) {
-                addLexeme(previousState, currentLexeme.toString());
+                lexemeEnd = index - 1;
+                addLexeme(previousState, currentLexeme.toString(), lexemeStart, lexemeEnd);
                 currentLexeme = new StringBuilder(nextLexeme.toString());
                 nextLexeme = new StringBuilder();
             }
@@ -217,7 +221,7 @@ public class LexicalAnalyzer {
         lexemes.clear();
     }
 
-    private void addLexeme(State prevState, String value) {
+    private void addLexeme(State prevState, String value, int startIndex, int endIndex) {
         LexemeType lexemeType = LexemeType.UNDEFINED;
         LexemeCategory lexemeCategory = LexemeCategory.UNDEFINED;
         if (prevState == State.ARITHMETIC) {
@@ -269,7 +273,7 @@ public class LexicalAnalyzer {
                 lexemeCategory = LexemeCategory.IDENTIFIER;
             }
         }
-        Lexeme lexeme = new Lexeme(lexemeType, lexemeCategory, value);
+        Lexeme lexeme = new Lexeme(lexemeType, lexemeCategory, value, startIndex, endIndex);
         if (!lexeme.value().isEmpty()) {
             lexemes.add(lexeme);
         }

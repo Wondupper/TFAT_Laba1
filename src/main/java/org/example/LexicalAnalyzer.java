@@ -204,7 +204,7 @@ public class LexicalAnalyzer {
                 }
             }
             if (currentState == State.ERROR) {
-                throw new IllegalArgumentException("Ошибка при обработке лексемы:" + currentLexeme + nextLexeme);
+                throw new IllegalArgumentException("Ошибка при обработке лексемы:" + currentLexeme + nextLexeme + " Позиция начала ошибки "  + " " + index);
             }
             if (canAdd) {
                 lexemeEnd = index - 1;

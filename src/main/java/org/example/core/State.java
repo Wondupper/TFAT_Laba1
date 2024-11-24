@@ -1,4 +1,4 @@
-package org.example;
+package org.example.core;
 
 public enum State {
     START,
@@ -6,7 +6,8 @@ public enum State {
     CONSTANT,
     ERROR,
     COMPARISON,
-    ARITHMETIC,
+    ARITHMETIC_LOW,
+    ARITHMETIC_HIGH,
     ASSIGMENT,
     DELIMITER,
     FINAL

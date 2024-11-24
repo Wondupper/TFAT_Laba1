@@ -1,4 +1,4 @@
-package org.example;
+package org.example.core;
 
 public enum LexemeType {
     IF,
@@ -11,7 +11,8 @@ public enum LexemeType {
     AND,
     OR,
     RELATION,
-    ARITHMETIC,
+    ARITHMETIC_LOW,
+    ARITHMETIC_HIGH,
     ASSIGMENT,
     DELIMITER,
     UNDEFINED

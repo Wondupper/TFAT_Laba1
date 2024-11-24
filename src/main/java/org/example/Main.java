@@ -1,5 +1,8 @@
 package org.example;
 
+import org.example.core.Lexeme;
+import org.example.lexical.LexicalAnalyzer;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

@@ -1,6 +1,9 @@
-package org.example;
+package org.example.lexical;
 
-import lombok.Getter;
+import org.example.core.Lexeme;
+import org.example.core.LexemeCategory;
+import org.example.core.LexemeType;
+import org.example.core.State;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,24 +33,21 @@ public class LexicalAnalyzer {
             char currentSymbol = input.charAt(index);
             switch (currentState) {
                 case START -> {
-                    if (Character.isWhitespace(currentSymbol)) {
+                    if (Character.isWhitespace(currentSymbol)) { // пробел
                         currentState = State.START;
-                    } else if
-                    (Character.isDigit(currentSymbol)) {
+                    } else if (Character.isDigit(currentSymbol)) { // цифра
                         currentState = State.CONSTANT;
-                    } else if
-                    (Character.isLetter(currentSymbol)) {
+                    } else if (Character.isLetter(currentSymbol)) { // символ
                         currentState = State.IDENTIFIER;
-                    } else if (currentSymbol == '>' ||
-                            currentSymbol == '<') {
+                    } else if (currentSymbol == '>' || currentSymbol == '<') { // больше меньше
                         currentState = State.COMPARISON;
-                    } else if (currentSymbol == '+' ||
-                            currentSymbol == '-' || currentSymbol == '*' || currentSymbol
-                            == '/') {
-                        currentState = State.ARITHMETIC;
-                    } else if (currentSymbol == '=') {
+                    } else if (currentSymbol == '+' || currentSymbol == '-' ) { // плюс минус
+                        currentState = State.ARITHMETIC_LOW;
+                    }else if (currentSymbol == '*' || currentSymbol == '/') { // умножить поделить
+                        currentState = State.ARITHMETIC_HIGH;
+                    } else if (currentSymbol == '=') { // равно
                         currentState = State.ASSIGMENT;
-                    } else if (currentSymbol == ';') {
+                    } else if (currentSymbol == ';') { // разделитель
                         currentState = State.DELIMITER;
                     } else {
                         currentState = State.ERROR;
@@ -59,24 +59,30 @@ public class LexicalAnalyzer {
                     }
                 }
                 case COMPARISON -> {
-                    if (Character.isWhitespace(currentSymbol)) {
+                    if (Character.isWhitespace(currentSymbol)) { // пробел
                         currentState = State.START;
-                    } else if (currentSymbol == '>') {
+                    } else if (currentSymbol == '>') { // больше
                         currentLexeme.append(currentSymbol);
                         currentState = State.COMPARISON;
-                    }else if (currentSymbol == '=') {
+                    }else if (currentSymbol == '=') { // равно
                         nextLexeme.append(currentSymbol);
                         currentState = State.ASSIGMENT;
-                    }else if (currentSymbol == '<') {
+                    }else if (currentSymbol == '<') { // меньше
                         nextLexeme.append(currentSymbol);
                         currentState = State.COMPARISON;
-                    } else if (Character.isLetter(currentSymbol)) {
+                    }else if (currentSymbol == '+' || currentSymbol == '-' ) { // плюс минус
+                        currentState = State.ARITHMETIC_LOW;
+                        nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == '*' || currentSymbol == '/') { // умножить поделить
+                        currentState = State.ARITHMETIC_HIGH;
+                        nextLexeme.append(currentSymbol);
+                    } else if (Character.isLetter(currentSymbol)) { // символ
                         currentState = State.IDENTIFIER;
                         nextLexeme.append(currentSymbol);
-                    } else if (Character.isDigit(currentSymbol)) {
+                    } else if (Character.isDigit(currentSymbol)) { // цифра
                         currentState = State.CONSTANT;
                         nextLexeme.append(currentSymbol);
-                    }else if (currentSymbol == ';') {
+                    }else if (currentSymbol == ';') { // разделитель
                         currentState = State.DELIMITER;
                         nextLexeme.append(currentSymbol);
                     } else {
@@ -89,21 +95,27 @@ public class LexicalAnalyzer {
                 }
 
                 case ASSIGMENT -> {
-                    if (currentSymbol == '=') {
+                    if (currentSymbol == '=') { // равно
                         currentState = State.COMPARISON;
                         currentLexeme.append(currentSymbol);
-                    }else if (currentSymbol == '>' || currentSymbol == '<') {
+                    }else if (currentSymbol == '>' || currentSymbol == '<') { // больше меньше
                         currentState = State.COMPARISON;
                         nextLexeme.append(currentSymbol);
-                    } else if (Character.isWhitespace(currentSymbol)) {
+                    } else if (Character.isWhitespace(currentSymbol)) { // пробел
                         currentState = State.START;
-                    } else if (Character.isLetter(currentSymbol)) {
+                    }else if (currentSymbol == '+' || currentSymbol == '-') { // плюс минус
+                        currentState = State.ARITHMETIC_LOW;
+                        nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == '*' || currentSymbol == '/') { // умножить поделить
+                        currentState = State.ARITHMETIC_HIGH;
+                        nextLexeme.append(currentSymbol);
+                    } else if (Character.isLetter(currentSymbol)) { // символ
                         currentState = State.IDENTIFIER;
                         nextLexeme.append(currentSymbol);
-                    } else if (Character.isDigit(currentSymbol)) {
+                    } else if (Character.isDigit(currentSymbol)) { // цифра
                         currentState = State.CONSTANT;
                         nextLexeme.append(currentSymbol);
-                    }else if (currentSymbol == ';') {
+                    }else if (currentSymbol == ';') { // разделитель
                         currentState = State.DELIMITER;
                         nextLexeme.append(currentSymbol);
                     } else {
@@ -112,25 +124,25 @@ public class LexicalAnalyzer {
                     }
                 }
                 case CONSTANT -> {
-                    if (Character.isWhitespace(currentSymbol)) {
+                    if (Character.isWhitespace(currentSymbol)) { // пробел
                         currentState = State.START;
-                    } else if (Character.isDigit(currentSymbol)) {
+                    } else if (Character.isDigit(currentSymbol)) { // цифра
                         canAdd = false;
                         currentState = State.CONSTANT;
                         currentLexeme.append(currentSymbol);
-                    } else if (currentSymbol == '<' ||
-                            currentSymbol == '>') {
+                    } else if (currentSymbol == '<' || currentSymbol == '>') { // больше меньше
                         currentState = State.COMPARISON;
                         nextLexeme.append(currentSymbol);
-                    } else if (currentSymbol == '=') {
+                    } else if (currentSymbol == '=') { // равно
                         currentState = State.ASSIGMENT;
                         nextLexeme.append(currentSymbol);
-                    } else if (currentSymbol == '+' || currentSymbol == '-'
-                            || currentSymbol == '*' || currentSymbol
-                            == '/') {
-                        currentState = State.ARITHMETIC;
+                    } else if (currentSymbol == '+' || currentSymbol == '-') { // плюс минус
+                        currentState = State.ARITHMETIC_LOW;
                         nextLexeme.append(currentSymbol);
-                    }else if (currentSymbol == ';') {
+                    }else if (currentSymbol == '*' || currentSymbol == '/') { // умножить поделить
+                        currentState = State.ARITHMETIC_HIGH;
+                        nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == ';') { // разделитель
                         currentState = State.DELIMITER;
                         nextLexeme.append(currentSymbol);
                     } else {
@@ -139,26 +151,25 @@ public class LexicalAnalyzer {
                     }
                 }
                 case IDENTIFIER -> {
-                    if (Character.isWhitespace(currentSymbol)) {
+                    if (Character.isWhitespace(currentSymbol)) { // пробел
                         currentState = State.START;
-                    } else if (Character.isDigit(currentSymbol)
-                            || Character.isLetter(currentSymbol)) {
+                    } else if (Character.isDigit(currentSymbol) || Character.isLetter(currentSymbol)) { // цифра или символ
                         currentState = State.IDENTIFIER;
                         canAdd = false;
                         currentLexeme.append(currentSymbol);
-                    } else if (currentSymbol == '>' ||
-                            currentSymbol == '<') {
+                    } else if (currentSymbol == '>' || currentSymbol == '<') { // больше меньше
                         currentState = State.COMPARISON;
                         nextLexeme.append(currentSymbol);
-                    } else if (currentSymbol == '=') {
+                    } else if (currentSymbol == '=') { // равно
                         currentState = State.ASSIGMENT;
                         nextLexeme.append(currentSymbol);
-                    } else if (currentSymbol == '+' ||
-                            currentSymbol == '-' || currentSymbol == '*' || currentSymbol
-                            == '/') {
-                        currentState = State.ARITHMETIC;
+                    } else if (currentSymbol == '+' || currentSymbol == '-' ) { // плюс минус
+                        currentState = State.ARITHMETIC_LOW;
                         nextLexeme.append(currentSymbol);
-                    }else if (currentSymbol == ';') {
+                    }else if (currentSymbol == '*' || currentSymbol == '/') { // умножить поделить
+                        currentState = State.ARITHMETIC_HIGH;
+                        nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == ';') { // разделитель
                         currentState = State.DELIMITER;
                         nextLexeme.append(currentSymbol);
                     } else {
@@ -166,27 +177,28 @@ public class LexicalAnalyzer {
                         canAdd = false;
                     }
                 }
-                case ARITHMETIC -> {
-                    if (Character.isWhitespace(currentSymbol)) {
+                case ARITHMETIC_LOW, ARITHMETIC_HIGH -> {
+                    if (Character.isWhitespace(currentSymbol)) { // пробел
                         currentState = State.START;
-                    } else if (Character.isLetter(currentSymbol)) {
+                    } else if (Character.isLetter(currentSymbol)) { // символ
                         currentState = State.IDENTIFIER;
                         nextLexeme.append(currentSymbol);
-                    }else if (currentSymbol == '=') {
+                    }else if (currentSymbol == '=') { // равно
                         currentState = State.ASSIGMENT;
                         nextLexeme.append(currentSymbol);
-                    } else if (currentSymbol == '<' || currentSymbol =='>') {
+                    } else if (currentSymbol == '<' || currentSymbol =='>') { // больше меньше
                         currentState = State.COMPARISON;
                         nextLexeme.append(currentSymbol);
-                    } else if (Character.isDigit(currentSymbol)) {
+                    } else if (Character.isDigit(currentSymbol)) { // цифра
                         currentState = State.CONSTANT;
                         nextLexeme.append(currentSymbol);
-                    } else if (currentSymbol == '-' ||
-                            currentSymbol == '+' || currentSymbol == '*' || currentSymbol
-                            == '/') {
-                        currentState = State.ARITHMETIC;
+                    } else if (currentSymbol == '-' || currentSymbol == '+') { // плюс минус
+                        currentState = State.ARITHMETIC_LOW;
                         nextLexeme.append(currentSymbol);
-                    }else if (currentSymbol == ';') {
+                    }else if (currentSymbol == '*' || currentSymbol == '/') { // умножить поделить
+                        currentState = State.ARITHMETIC_HIGH;
+                        nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == ';') { // разделитель
                         currentState = State.DELIMITER;
                         nextLexeme.append(currentSymbol);
                     } else {
@@ -195,25 +207,28 @@ public class LexicalAnalyzer {
                     }
                 }
                 case DELIMITER -> {
-                    if(Character.isWhitespace(currentSymbol)) {
+                    if(Character.isWhitespace(currentSymbol)) { // пробел
                         currentState = State.START;
-                    } else if (currentSymbol == '>'||currentSymbol == '<') {
+                    } else if (currentSymbol == '>'||currentSymbol == '<') { // больше меньше
                         currentState = State.COMPARISON;
                         nextLexeme.append(currentSymbol);
-                    }else if (currentSymbol == '=') {
+                    }else if (currentSymbol == '=') { // равно
                         currentState = State.ASSIGMENT;
                         currentLexeme.append(currentSymbol);
-                    } else if (Character.isLetter(currentSymbol)) {
+                    } else if (Character.isLetter(currentSymbol)) { // символ
                         currentState = State.IDENTIFIER;
                         nextLexeme.append(currentSymbol);
-                    } else if (Character.isDigit(currentSymbol)) {
+                    } else if (Character.isDigit(currentSymbol)) { // цифра
                         currentState = State.CONSTANT;
                         nextLexeme.append(currentSymbol);
-                    } else if (currentSymbol == ';') {
+                    } else if (currentSymbol == ';') { // разделитель
                         currentState = State.DELIMITER;
                         currentLexeme.append(currentSymbol);
-                    } else if (currentSymbol == '-' || currentSymbol == '+' || currentSymbol == '*' || currentSymbol == '/') {
-                        currentState = State.ARITHMETIC;
+                    } else if (currentSymbol == '-' || currentSymbol == '+') { // плюс минус
+                        currentState = State.ARITHMETIC_LOW;
+                        nextLexeme.append(currentSymbol);
+                    }else if (currentSymbol == '*' || currentSymbol == '/') { // умножить поделить
+                        currentState = State.ARITHMETIC_HIGH;
                         nextLexeme.append(currentSymbol);
                     } else {
                         currentState = State.ERROR;
@@ -242,8 +257,11 @@ public class LexicalAnalyzer {
     private void addLexeme(State prevState, String value, int startIndex, int endIndex) {
         LexemeType lexemeType = LexemeType.UNDEFINED;
         LexemeCategory lexemeCategory = LexemeCategory.UNDEFINED;
-        if (prevState == State.ARITHMETIC) {
-            lexemeType = LexemeType.ARITHMETIC;
+        if (prevState == State.ARITHMETIC_LOW) {
+            lexemeType = LexemeType.ARITHMETIC_LOW;
+            lexemeCategory = LexemeCategory.SPECIAL_SYMBOL;
+        }else if (prevState == State.ARITHMETIC_HIGH) {
+            lexemeType = LexemeType.ARITHMETIC_HIGH;
             lexemeCategory = LexemeCategory.SPECIAL_SYMBOL;
         } else if (prevState == State.ASSIGMENT) {
             lexemeCategory = LexemeCategory.SPECIAL_SYMBOL;
